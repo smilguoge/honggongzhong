@@ -22,13 +22,15 @@ export default {
   },
     data() {
       return {
+        openid:this.$store.state.openid,
+        // openid:"oNrsY1nhE5kjM4DTHPl3IYGpDrIw",
         ruleForm: {
           yaoqin: '',
         },
         rules: {
           yaoqin: [
             { required: true, message: '请输入邀请码', trigger: 'blur' },
-            { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+            { min: 1, max: 8, message: '长度在 3 到 50 个字符', trigger: 'blur' }
           ]
         }
       };
@@ -43,7 +45,19 @@ export default {
     submitForm(ruleForm) {
         this.$refs[ruleForm].validate((valid) => {
           if (valid) {
-            alert('绑定成功!');
+            this.$axios.post("/api/shop/bind",{
+              openid:this.openid,
+              bind_code:this.ruleForm.yaoqin
+            })
+            .then(res=>{
+              if(res.code == 200){
+                alert(res.message)
+                this.$router.go(-1);
+              }
+              if(res.code == 422){
+                alert(res.message)
+              }
+            })
           } else {
             console.log('绑定失败!!');
             return false;

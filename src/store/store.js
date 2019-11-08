@@ -7,6 +7,7 @@ export default new vuex.Store({
     token: '',
     openid:'',
     test:'111',
+    id:'',
     indexspan:localStorage.getItem('indexspan') || 0,
 	},
 	mutations: {
@@ -24,6 +25,9 @@ export default new vuex.Store({
       },
       set_openid(state, openid) {
         state.openid = openid
+      },
+      set_service(state,id){
+        state.id = id
       },
       del_token(state) {
       state.token = ''

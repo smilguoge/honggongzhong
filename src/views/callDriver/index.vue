@@ -12,7 +12,7 @@
         <div class="tit">
           <div class="chufadi">
             <i class="iconfont icon-dingwei icon1"></i>
-            <p class="txt_call">选择出发地</p>
+            <p class="txt_call">当前位置</p>
           </div>
           <p class="address">
             {{province}}{{city}}{{district}}{{addr}}
@@ -20,7 +20,7 @@
           </p>
         </div>
       </div>
-      <p class="qibu">18元起步，查看服务价格和接单范围</p>
+      <p class="qibu"><router-link to="/address">点击查看地区服务价格</router-link></p>
       <el-button
         type="danger"
         class="button_hujiao"
@@ -73,6 +73,8 @@ export default {
   inject: ['reload'],
   data() {
     return {
+      order_id:'',
+      extension_shop:'0',
       province:'',
       openid:'',
       city:'',
@@ -164,11 +166,12 @@ export default {
             platform:'official_accounts',
             openid :this.openid
           }).then(res=>{
+            console.log(res.data)
               if(res.code == 200){
                 this.access_token = res.data.access_token
                 let data = res.data;
                 this.$store.commit('set_token', 'bearer ' + data.access_token);
-                this.$router.go(0)
+                
               }
           })
         } else {
@@ -179,16 +182,25 @@ export default {
       });
     },
     callDriver() {
-      let extension_shop = this.$route.query.extension_shop;
+      this.extension_shop = this.$route.query.extension_shop;
       this.$axios.post('/api/order/pagesave',{
             order_address :this.order_address,
             order_lng :this.order_lng ,
             order_lat :this.order_lat ,
-            extension_shop:extension_shop
+            extension_shop:this.extension_shop,
+            token:this.access_token
           }).then(res =>{
+            console.log(res.data)
             if(res.code == 200){
+              console.log(res.data.order_id)
+              this.order_id = res.data.order_id
               alert('预约成功')
-              this.$router.push('/trip')
+              this.$router.push({
+                path: 'trip', 
+                query: {
+                  order_id: this.order_id
+                }
+              })
             }
             if(res.code == 401){
               this.dialogFormVisible =true
@@ -219,7 +231,6 @@ export default {
           this.access_token = res.data.access_token
           let data = res.data;
           this.$store.commit('set_token', 'bearer ' + data.access_token);
-          this.$router.go(0)
         }
         if(res.code ==422){
           this.dialogFormVisible =true
@@ -250,6 +261,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.qibu a{
+  color:#999;
+}
 .callbox {
   display: flex;
   flex-direction: column;
@@ -413,6 +427,11 @@ export default {
 }
 </style>
 <style lang="less">
+.el-button--danger:focus, .el-button--danger:hover{
+    background: #999999!important;
+    border-color: #999999!important;
+    box-shadow: 0px 10px 15px rgba(0,0,0,.2);
+}
 .v_phone {
   margin-bottom: 15px;
 }

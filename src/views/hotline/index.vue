@@ -41,7 +41,7 @@ export default {
 //   },
   methods: {
       getcompany:function(){
-          this.$axios.get("http://api.bzffs.cc/api/wechat/company/hotline", {
+          this.$axios.get("/api/wechat/company/hotline", {
           name: this.name,
           page:1,
           limit:this.limit   
@@ -57,7 +57,7 @@ export default {
       },
       
       load () {
-      this.$axios.get("http://api.bzffs.cc/api/wechat/company/hotline", {
+      this.$axios.get("/api/wechat/company/hotline", {
           name: this.name,
           page:this.page,
           limit:this.limit          
@@ -120,6 +120,7 @@ export default {
     width: 100%;
     padding: 0 20px;
     border-radius: 0 4px 4px 0;
+    opacity: 1;
 }
 .line_hot{
     width: 40%;

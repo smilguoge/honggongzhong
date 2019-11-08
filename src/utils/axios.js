@@ -2,15 +2,17 @@
 import axios from "axios"
 import qs from 'qs'
 import store from '../store/store'
+import Router from '../router/index'
 // 是否允许跨域
 axios.defaults.withCredentials=false;
+axios.defaults.headers.common['Authorization'] = store.state.token;
 // axios初始化：延迟时间，主路由地址
 let instance = axios.create({
-  baseURL: 'https://hsf-api.threeape.com',
-  // baseURL: ' http://api.bzffs.cc/',
+  // baseURL: 'https://hsf-api.threeape.com',
+  baseURL: ' http://api.bzffs.cc/',
   timeout: 10000,
   headers: {
-    'x-service-id': '2',
+    // 'x-service-id':"1",
     'Authorization':store.state.token
     // 'Authorization':'bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9hcGkuYnpmZnMuY2NcL2FwaVwvYXV0aFwvcXVpY2tfbG9naW4iLCJpYXQiOjE1NzIzMTYwOTksImV4cCI6MTU3MzUyNTY5OSwibmJmIjoxNTcyMzE2MDk5LCJqdGkiOiJVbmN4Wm9oMnlLaEFPRkRjIiwic3ViIjoyNzkwMDgsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.cCuBhRBzNobvUiXv6Y-eZTEkpayPdnO8zgkBDKyu3Jo'
 }
@@ -18,18 +20,17 @@ let instance = axios.create({
 // 设置请求头
 
 // 设置拦截器
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   config => {
-    if (store.state.token) {
-      // console.log(store.state.token)
-      config.headers.token = `${store.state.token}`;
-      // config['headers']['Authorization'] = AUTH_TOKEN
-    }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  });
+    var url = Router.app.$route.fullPath
+    var newUrl = decodeURIComponent(url);
+    var service_id = newUrl.match(/service_id=(\S*)/)[1]
+    config.headers['x-service-id'] = service_id
+    return config
+  }, function (error) {
+    return Promise.reject(error) 
+  }
+)
 //响应拦截器
 instance.interceptors.response.use(function(response){
   //对响应数据做些事

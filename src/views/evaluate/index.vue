@@ -59,19 +59,20 @@ export default {
               evaluate_item:this.ruleForm.itemsstring.join(','),
               evaluate_reason:this.ruleForm.desc
             }).then(res=>{
-              if(res.data.code=200){
+              if(res.data.code == 200){
                 alert("提交成功！")
+              }else{
+                alert(res.message)
               }
             })
         } else {
-          console.log("提交失败");
           return false;
         }
       });
     }
   },
   created() {
-      this.sid=this.$route.query.id;
+      this.sid=this.$route.query.order_id;
       this.$axios.get("/api/parameter/item", {pid: 'ORDER_EVALUATE'}).then(res=>{
            if (res.code == 200) {
                 this.ruleForm.type=res.data
@@ -85,6 +86,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.eva_form{
+  margin-bottom: 60px;
+}
 .evaluate {
   width: 100%;
   height: 100vh;
@@ -122,7 +126,8 @@ export default {
     }
     .biaoqian {
       width: 100%;
-      height: 300px;
+      height: auto;
+      display: flex;
       background-color: #f4f4f4;
       border-radius: 15px;
       position: relative;
